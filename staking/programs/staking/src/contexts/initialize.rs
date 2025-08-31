@@ -18,16 +18,20 @@ pub struct CreateStakeAccount<'info> {
 }
 
 impl<'info> CreateStakeAccount<'info> {
-    pub fn initialize_stake_account(&mut self, signer_public_key: &Pubkey, bump: u8) -> Result<()> {
+    pub fn initialize_stake_account(&mut self, bumps: &CreateStakeAccountBumps) -> Result<()> {
         self.stake_account.set_inner(StakeAccount {
-            owner: *signer_public_key,
+            owner: self.signer.key(),
             staked_amount: 0,
             total_points: 0,
-            last_update_time: 0,
-            bump: bump,
+            last_update_epoch: 0,
+            bump: bumps.stake_account,
         });
 
-        msg!("User stake account created successfully");
+        msg!(
+            "Stake account created for {} with bump {}",
+            self.signer.key(),
+            bumps.stake_account
+        );
 
         Ok(())
     }

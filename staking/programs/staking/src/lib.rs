@@ -11,8 +11,7 @@ pub mod stake {
     use super::*;
 
     pub fn initialize(ctx: Context<CreateStakeAccount>) -> Result<()> {
-        ctx.accounts
-            .initialize_stake_account(&ctx.accounts.signer.key(), ctx.bumps.stake_account)
+        ctx.accounts.initialize_stake_account(&ctx.bumps)
         // You don’t get the bump from ctx.accounts.stake_account.bump. that account isnt initialised yet
     }
 
@@ -25,6 +24,6 @@ pub mod stake {
     }
 
     pub fn claim_points(ctx: Context<ClaimReward>) -> Result<()> {
-        ctx.accounts.claim_reward(ctx.bumps.mint_authority)
+        ctx.accounts.claim_reward(&ctx.bumps)
     }
 }

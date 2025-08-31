@@ -12,8 +12,8 @@ pub enum StakeError {
     Overflow,
     #[msg("Arithmetic underflow")]
     Underflow,
-    #[msg("Invalid timestamp")]
-    InvalidTimestamp,
+    #[msg("Invalid epoch")]
+    InvalidEpoch,
     #[msg("Insufficient points to claim tokens")]
     InsufficientTokenPoints,
     #[msg("Invalid mint authority")]

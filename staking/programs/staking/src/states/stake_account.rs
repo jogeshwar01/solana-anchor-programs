@@ -6,7 +6,7 @@ pub struct StakeAccount {
     pub owner: Pubkey,
     pub staked_amount: u64,
     pub total_points: u64,
-    pub last_update_time: i64,
+    pub last_update_epoch: u64,
     pub bump: u8,
 }
 
