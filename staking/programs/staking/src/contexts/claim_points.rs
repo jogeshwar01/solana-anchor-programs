@@ -12,11 +12,19 @@ pub struct ClaimReward<'info> {
     user_stake_account: Account<'info, StakeAccount>,
     #[account(mut)]
     signer: Signer<'info>,
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = reward_mint.mint_authority.unwrap() == mint_authority.key() @ StakeError::InvalidMintAuthority
+    )]
     reward_mint: Account<'info, Mint>,
+    /// CHECK: This account is used as a mint authority and is validated by the seeds constraint
     #[account(seeds = [b"mint_authority"], bump)]
     mint_authority: UncheckedAccount<'info>,
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = user_token_account.mint == reward_mint.key() @ StakeError::InvalidTokenAccount,
+        constraint = user_token_account.owner == signer.key() @ StakeError::InvalidOwner
+    )]
     user_token_account: Account<'info, TokenAccount>,
     token_program: Program<'info, Token>,
 }

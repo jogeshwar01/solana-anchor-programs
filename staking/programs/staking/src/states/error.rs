@@ -16,4 +16,10 @@ pub enum StakeError {
     InvalidTimestamp,
     #[msg("Insufficient points to claim tokens")]
     InsufficientTokenPoints,
+    #[msg("Invalid mint authority")]
+    InvalidMintAuthority,
+    #[msg("Invalid token account")]
+    InvalidTokenAccount,
+    #[msg("Invalid owner")]
+    InvalidOwner
 }

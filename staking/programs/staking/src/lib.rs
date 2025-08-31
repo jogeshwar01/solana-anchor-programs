@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 mod contexts;
-use contexts::{ClaimReward, CreateStakeAccount, Stake, Unstake};
+use contexts::*;
 mod states;
 use states::*;
 
