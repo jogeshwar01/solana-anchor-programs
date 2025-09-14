@@ -10,21 +10,21 @@ pub struct Swap<'info> {
         seeds=[b"amm", token_a_mint.key().as_ref(), token_b_mint.key().as_ref()],
         bump,
     )]
-    pub amm: Account<'info, AMM>,
+    pub amm: AccountLoader<'info, AMM>,
 
     #[account(
         mut,
         associated_token::mint = token_a_mint,
         associated_token::authority = signer
     )]
-    pub token_a_account: Account<'info, TokenAccount>,
+    pub token_a_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         associated_token::mint = token_b_mint,
         associated_token::authority = signer
     )]
-    pub token_b_account: Account<'info, TokenAccount>,
+    pub token_b_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
@@ -33,15 +33,15 @@ pub struct Swap<'info> {
         token::mint = token_a_mint,
         token::authority = pool_authority
     )]
-    pub reserve_a: Account<'info, TokenAccount>,
+    pub reserve_a: Box<Account<'info, TokenAccount>>,
     #[account(
         mut,
-        seeds = [b"reserve_a", token_a_mint.key().as_ref(), token_b_mint.key().as_ref()],
+        seeds = [b"reserve_b", token_a_mint.key().as_ref(), token_b_mint.key().as_ref()],
         bump,
-        token::mint = token_a_mint,
+        token::mint = token_b_mint,
         token::authority = pool_authority
     )]
-    pub reserve_b: Account<'info, TokenAccount>,
+    pub reserve_b: Box<Account<'info, TokenAccount>>,
 
     /// CHECK: pool authority over token reserves and lp mint
     #[account(
@@ -50,8 +50,8 @@ pub struct Swap<'info> {
     )]
     pub pool_authority: UncheckedAccount<'info>,
 
-    pub token_a_mint: Account<'info, Mint>,
-    pub token_b_mint: Account<'info, Mint>,
+    pub token_a_mint: Box<Account<'info, Mint>>,
+    pub token_b_mint: Box<Account<'info, Mint>>,
 
     pub token_program: Program<'info, Token>,
 
@@ -65,15 +65,15 @@ impl<'info> Swap<'info> {
 
         let (from_reserve, to_reserve, from_token_account, to_token_account) = if is_a {
             (
-                &self.reserve_b,
                 &self.reserve_a,
+                &self.reserve_b,
                 &self.token_a_account,
                 &self.token_b_account,
             )
         } else {
             (
-                &self.reserve_a,
                 &self.reserve_b,
+                &self.reserve_a,
                 &self.token_b_account,
                 &self.token_a_account,
             )
@@ -107,7 +107,7 @@ impl<'info> Swap<'info> {
             Transfer {
                 from: from_token_account.to_account_info(),
                 to: to_reserve.to_account_info(),
-                authority: self.pool_authority.to_account_info(),
+                authority: self.signer.to_account_info(),
             },
         );
 
